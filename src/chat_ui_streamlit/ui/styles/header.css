@@ -1,0 +1,91 @@
+/* Header CSS */
+.cat-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background-color: #1e1f20;
+  border-bottom: 1px solid #3c4043;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 1000;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.header-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cat-title {
+  color: #e8eaed;
+  font-size: 22px;
+  font-weight: 400;
+  margin: 0;
+}
+
+.model-selector {
+  margin-left: 195px;
+  background-color: #2d2e30;
+  border: 1px solid #3c4043;
+  border-radius: 20px;
+  padding: 8px 16px;
+  color: #e8eaed;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.upgrade-btn {
+  background: linear-gradient(135deg, #8a9335, #764444);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: white;
+  font-weight: 500;
+}
+
+.menu-btn {
+  background: none;
+  border: none;
+  color: #e8eaed;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.menu-btn:hover {
+  background-color: #3c4043;
+}

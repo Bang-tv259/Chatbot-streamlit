@@ -1,0 +1,167 @@
+[project]
+name = "chat_ui_streamlit"
+version = "0.1.2"
+description = "UI for chat or deep research."
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+authors = [{ name = "Cat", email = "cat@cat.com" }]
+dependencies = [
+  "httpx>=0.28.1",
+  "pydantic>=2.10.6",
+  "pydantic-settings>=2.8.0",
+  "streamlit>=1.42.2",
+  "google-generativeai>=0.6.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/chat_ui_streamlit"]
+
+[dependency-groups]
+dev = [
+  "ipykernel>=6.29.5",
+  "ruff>=0.9.7",
+  "pylint>=3.3.4",
+  "pre-commit>=4.1.0",
+  # type checking
+  "mypy[faster-cache]>=1.15.0",
+  # testing
+  "hypothesis>=6.127.2",
+  "pytest>=8.3.4",
+  "pytest-clarity>=1.0.1",
+  "pytest-cov>=6.0.0",
+  "pytest-mock>=3.14.0",
+  "pytest-pretty>=1.2.0",
+  "pytest-randomly>=3.16.0",
+  "pytest-instafail>=0.5.0",
+  "pytest-benchmark>=5.1.0",
+  "respx>=0.22.0",
+  "pytest-asyncio>=0.26.0",
+]
+
+[tool.mypy]
+mypy_path = ["src"]
+python_version = "3.12"
+exclude = [".cache/", ".venv/"]
+# disallow dynamic typing
+disallow_any_explicit = false
+disallow_any_generics = true
+# untyped definitions and calls
+disallow_untyped_calls = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+# none and optional handling
+implicit_optional = false
+strict_optional = true
+# configuring warnings
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_return_any = true
+warn_unreachable = true
+# miscellaneous strictness flags
+allow_redefinition = false
+enable_error_code = [
+  "redundant-self",
+  "redundant-expr",
+  "possibly-undefined",
+  "truthy-bool",
+  "truthy-iterable",
+  "ignore-without-code",
+  "unused-ignore",
+  "narrowed-type-not-subtype",
+]
+implicit_reexport = false
+strict_concatenate = true
+strict_equality = true
+strict = true
+# configuring error messages
+show_error_context = true
+show_column_numbers = true
+hide_error_codes = false
+# incremental mode
+cache_dir = ".cache/mypy"
+# advanced options
+plugins = ["pydantic.mypy"]
+# miscellaneous
+warn_unused_configs = false
+
+[[tool.mypy.overrides]]
+module = ["streamlit.*", "google.*"]
+ignore_missing_imports = true
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+warn_untyped_fields = true
+
+[tool.pytest.ini_options]
+addopts = [
+  # general
+  "--exitfirst",
+  "-vv",
+  "--failed-first",
+  # reporting
+  "--durations=5",
+  "--no-header",
+  "-ra",
+  "--showlocals",
+  "--junitxml=.cache/pytest/report.xml",
+  # warnings
+  "--strict-config",
+  "--strict-markers",
+  # collection
+  "--import-mode=importlib",
+  "--doctest-modules",
+  "--doctest-continue-on-failure",
+  # pytest-cov
+  "--cov",
+  "--cov-report=term-missing:skip-covered",
+  "--cov-report=xml:.cache/pytest/coverage.xml",
+  # pytest-clarity
+  "--diff-symbols",
+  # pytest-instafail
+  "--instafail",
+  # pytest-benchmark
+  "--benchmark-skip",
+  "--benchmark-warmup=on",
+  "--benchmark-disable-gc",
+  "--benchmark-sort=mean",
+  "--benchmark-storage=file://./.cache/benchmarks",
+  # hypothesis
+  "--hypothesis-show-statistics",
+  "--hypothesis-explain",
+]
+cache_dir = ".cache/pytest"
+doctest_optionflags = "NUMBER IGNORE_EXCEPTION_DETAIL"
+markers = ["slow: mark tests as slow"]
+testpaths = ["tests"]
+verbosity_assertions = 2
+xfail_strict = true
+# pytest-asyncio
+asyncio_default_fixture_loop_scope = "module"
+asyncio_default_test_loop_scope = "module"
+
+[tool.coverage.run]
+source = ["src"]
+omit = []
+branch = true
+data_file = ".cache/pytest/coverage"
+relative_files = true
+
+[tool.coverage.report]
+fail_under = 50
+show_missing = true
+skip_covered = true
+exclude_lines = [
+  "no cover",
+  "if TYPE_CHECKING:",
+  "raise NotImplementedError",
+  "if __name__ == .__main__.:",
+]

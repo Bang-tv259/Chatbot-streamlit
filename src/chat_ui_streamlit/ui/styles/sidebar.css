@@ -1,0 +1,61 @@
+/* Sidebar CSS */
+.cat-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 280px;
+  height: 100vh;
+  background-color: #1e1f20;
+  border-right: 1px solid #3c4043;
+  z-index: 900;
+  overflow-y: auto;
+  padding-top: 64px;
+}
+
+.sidebar-section {
+  padding: 16px 24px;
+  border-bottom: 1px solid #3c4043;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  color: #e8eaed;
+  margin-bottom: 4px;
+  transition: background-color 0.2s;
+}
+
+.sidebar-item:hover {
+  background-color: #2d2e30;
+}
+
+.sidebar-item.active {
+  background-color: #36474f;
+  color: white;
+}
+
+.sidebar-item-icon {
+  font-size: 18px;
+  width: 20px;
+  text-align: center;
+}
+
+.sidebar-item-text {
+  font-size: 14px;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar-section-title {
+  color: #9aa0a6;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
