@@ -11,6 +11,7 @@ dependencies = [
   "pydantic-settings>=2.8.0",
   "streamlit>=1.42.2",
   "google-generativeai>=0.6.0",
+  "exa-py>=0.1.0",
 ]
 
 [build-system]

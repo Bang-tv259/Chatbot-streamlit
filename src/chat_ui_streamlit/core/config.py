@@ -11,8 +11,11 @@ class ChatUIConfig(BaseSettings):
         extra="ignore",
     )
 
-    # gemini
+    # llm client (gemini)
     gemini_api_key: str
+
+    # search engine (exa.ai)
+    search_engine_api_key: str
 
 
 config = ChatUIConfig()

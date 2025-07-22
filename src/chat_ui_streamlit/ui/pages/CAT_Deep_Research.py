@@ -6,6 +6,7 @@ from datetime import UTC, datetime
 
 import streamlit as st
 import google.generativeai as genai
+from exa_py import Exa
 
 from chat_ui_streamlit.core.config import config
 from chat_ui_streamlit.core.constants import MODEL_NAME
@@ -30,6 +31,33 @@ st.set_page_config(
 # with deployment on Streamlit Cloud.
 # Streamlit Cloud may restrict certain dynamic behaviors, so
 # constants must be pre-defined and static for stable deployment.
+
+MAX_SEARCH_RESULTS = 10
+MAX_CONTEXT_LENGTH = 25000
+BASE_CHAT_TEMPLATE = """
+You are a precise and logical AI assistant. Your primary task is to answer the user's question.
+
+Rules:
+1. If the provided context is NOT empty, use ONLY the information in the context to answer. Do not add outside knowledge.
+2. If the provided context IS empty, answer the question using your own knowledge base, ensuring the response is accurate and reliable.
+3. Always answer in the **same language as the user question**.
+4. The answer must be in **Markdown format**, with a clear and well-structured layout (e.g., bullet points, numbered lists, tables, or code blocks where appropriate).
+5. Avoid unnecessary words, greetings, or commentary. Return only the essential answer.
+6. Ensure the answer is concise, logically structured, and scientifically accurate.
+
+Context:
+{context}
+
+Question:
+{question}
+
+---
+Please provide a detailed, accurate, and concise response that directly answers the question.
+If context is provided, rely solely on it. If no context is provided, use your own knowledge.
+Format the entire response using proper Markdown syntax with clear structure.
+Ensure the response is written in the same language as the original question.
+"""  # noqa: E501
+
 
 RESEARCH_QUESTIONS_TEMPLATE = """
 Please generate a list of 5 research questions based on the following input.
@@ -124,6 +152,8 @@ genai.configure(api_key=config.gemini_api_key)
 if "chat_client" not in st.session_state:
     st.session_state.chat_client = genai.GenerativeModel(model_name=MODEL_NAME[0])
 
+search_engine = Exa(api_key=config.search_engine_api_key)
+
 
 # ======================= MAIN APP =======================
 def main() -> None:  # noqa: C901, PLR0912, PLR0914, PLR0915
@@ -157,12 +187,53 @@ def main() -> None:  # noqa: C901, PLR0912, PLR0914, PLR0915
         with st.spinner(
             f"🚀 [Chat] CAT is analyzing your request: '{prompt}'...", show_time=True
         ):
+            # Create a container to hold the streaming response
+            message_container = st.empty()
+            # Perform search engine
+            search_results = search_engine.search_and_contents(
+                prompt,
+                text=True,
+                num_results=MAX_SEARCH_RESULTS,
+                type="keyword",
+            ).results
+
+            if not search_results:
+                full_prompt = BASE_CHAT_TEMPLATE.format(
+                    context="No relevant context found.",
+                    question=prompt,
+                )
+                reference_links = []
+            else:
+                search_context = "\n".join([
+                    f"Context {idx + 1}: {result.text.strip()}"
+                    for idx, result in enumerate(search_results)
+                ])
+                reference_links = [result.url for result in search_results]
+                reference_links_formatted = "<br>".join(
+                    f"- {link}" for link in reference_links
+                )
+                # Prepare the full prompt with context
+                full_prompt = BASE_CHAT_TEMPLATE.format(
+                    context=search_context[:MAX_CONTEXT_LENGTH],
+                    question=prompt,
+                )
+                message_container.markdown(
+                    f"""
+                    <div class="message assistant">
+                        <div class="message-avatar">😽</div>
+                        <div class="message-content">
+                            <div class="message-bubble" style="background-color: #2c2222b3; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+                                References: <br> {reference_links_formatted}
+                            </div>
+                        </div>
+                    </div>
+                    """,  # noqa: E501
+                    unsafe_allow_html=True,
+                )
+
             try:
                 chat_session = st.session_state.chat_client.start_chat(history=[])
-                response = chat_session.send_message(prompt, stream=True)
-
-                # Create a container to hold the streaming response
-                message_container = st.empty()
+                response = chat_session.send_message(full_prompt, stream=True)
 
                 # Initialize streaming content
                 streaming_content = ""
@@ -188,9 +259,15 @@ def main() -> None:  # noqa: C901, PLR0912, PLR0914, PLR0915
                     time.sleep(0.3)
 
                 # Log assistant response
+                answer_final = (
+                    streaming_content.strip()
+                    + "<br><br>"
+                    + "Reference Links:<br>"
+                    + reference_links_formatted
+                )
                 st.session_state.messages.append({
                     "role": "assistant",
-                    "content": streaming_content,
+                    "content": answer_final,
                     "timestamp": datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S"),
                     "model": MODEL_NAME[0],
                 })

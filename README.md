@@ -58,6 +58,7 @@ A modern, AI-powered chat interface built with Streamlit and Google Gemini, desi
 
 - Python 3.11+
 - Google Gemini API Key
+- Search Engine (Exa.ai Key)
 
 ### Installation
 
@@ -84,6 +85,7 @@ A modern, AI-powered chat interface built with Streamlit and Google Gemini, desi
 
    ```env
    CHAT_UI_GEMINI_API_KEY=your_gemini_api_key_here
+   CHAT_UI_SEARCH_ENGINE_API_KEY=your_search_engine_api_key_here (exa.ai)
    ```
 
 4. **Run the application**
@@ -96,25 +98,6 @@ A modern, AI-powered chat interface built with Streamlit and Google Gemini, desi
 
    Open your browser and navigate to `http://localhost:8501`
 
-## ⚙️ Configuration
-
-The application uses Pydantic Settings for configuration management. All settings can be configured via environment variables with the `CHAT_UI_` prefix:
-
-| Environment Variable     | Description           | Required |
-| ------------------------ | --------------------- | -------- |
-| `CHAT_UI_GEMINI_API_KEY` | Google Gemini API Key | Yes      |
-
-## 🔧 API Integration
-
-The application integrates with Google Gemini AI for chat capabilities:
-
-```python
-from chat_ui_streamlit.core.config import config
-
-# Configuration is automatically loaded from environment
-api_key = config.gemini_api_key
-```
-
 ## 📦 Dependencies
 
 ### Production Dependencies
@@ -123,6 +106,7 @@ api_key = config.gemini_api_key
 - **pydantic**: Data validation and settings management
 - **pydantic-settings**: Settings management for Pydantic
 - **google-generativeai**: Google Gemini AI integration
+- **exa-py**: Search Engine
 
 ### Development Dependencies
 
@@ -140,7 +124,6 @@ api_key = config.gemini_api_key
 
 ### Development Guidelines
 
-- Follow PEP 8 style guidelines
 - Write comprehensive tests for new features
 - Update documentation for any API changes
 - Use type hints for all function signatures
@@ -151,6 +134,7 @@ api_key = config.gemini_api_key
 
 - Initial release with core chat functionality
 - Google Gemini integration
+- Search Engine integration
 - Component-based UI architecture
 - Environment-based configuration
 
@@ -166,6 +150,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - [Streamlit](https://streamlit.io/) for the amazing web framework
 - [Google Gemini](https://deepmind.google/technologies/gemini/) for AI capabilities
+- [Exa.ai](https://exa.ai/) for search engine
 - [Pydantic](https://pydantic.dev/) for robust data validation
 
 ## 📞 Support
